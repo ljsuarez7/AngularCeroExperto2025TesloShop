@@ -1,7 +1,7 @@
 <div class="card card-compact bg-base-100 shadow-xl animate-fadeIn">
   <figure>
     <img
-      [src]="imageUrl()"
+      [src]="product().images | productImage"
       [alt]="product().title" />
   </figure>
   <div class="card-body">
