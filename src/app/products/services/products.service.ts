@@ -30,17 +30,20 @@ export class ProductsService {
         offset,
         gender
       }
-    });
-    // .pipe(
-    //   tap(resp => console.log(resp))
-    // );
+    })
+    .pipe( //Este console log habria que quitarlo para pro, pero lo dejo como ejemplo
+      tap(resp => console.log(resp))
+    );
 
   }
 
   getProductByIdSlug(idSlug: string): Observable<Product> {
 
     return this.http
-    .get<Product>(`${baseUrl}/products/${idSlug}`);
+    .get<Product>(`${baseUrl}/products/${idSlug}`)
+    .pipe( //Este console log habria que quitarlo para pro, pero lo dejo como ejemplo
+      tap(resp => console.log(resp))
+    );
 
 
   }
