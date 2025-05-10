@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { ProductCardComponent } from '@products/components/product-card/product-card.component';
 import { ProductsService } from '@products/services/products.service';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-home-page',
@@ -13,10 +15,25 @@ export class HomePageComponent {
 
   productsService = inject(ProductsService);
 
+  activatedRoute = inject(ActivatedRoute);
+
+  currentPage = toSignal(
+    this.activatedRoute.queryParamMap.pipe(
+      map(params => (params.get('page') ? +params.get('page')! : 1)),
+      map(page => (isNaN(page) ? 1 : page))
+    ),
+    //Gracias a este initialValue hacemos que si el param no viene en la url siempre de 1
+    {
+      initialValue: 1
+    }
+  );
+
   productsResource = rxResource({
-    request: () => ({}),
+    request: () => ({page: this.currentPage() - 1}),
     loader: ({request}) => {
-      return this.productsService.getProducts({});
+      return this.productsService.getProducts({
+        offset: request.page * 9
+      });
     }
   });
 
