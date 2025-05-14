@@ -38,8 +38,8 @@ export class AuthService {
   });
 
   user = computed(() => this._user());
-
   token = computed(this._token);
+  isAdmin = computed(() => this._user()?.roles.includes('admin') ?? false);
 
   login(email: string, password: string): Observable<boolean> {
     return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, {
@@ -73,6 +73,7 @@ export class AuthService {
       return of(false);
     }
 
+    //Podemos mirar de hacer un caché para el checkstatus que dure X para no estar llamando al servicio una y otra vez por los guards
     return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {
     }).pipe(
       map(resp => this.handleAuthSuccess(resp)),
