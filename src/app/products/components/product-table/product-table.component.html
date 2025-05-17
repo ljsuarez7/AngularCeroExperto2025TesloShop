@@ -34,7 +34,12 @@
                 </div>
               </div>
               <div>
-                <a [routerLink]="['/admin/products', product.id]" class="font-bold">{{product.title}}</a>
+
+                <a
+                  [routerLink]="['/admin/products', product.id]"
+                  class="font-bold hover:text-accent transition-colors duration-300">
+                  {{product.title}}
+                </a>
                 <!-- Se podria crear un pipe para no hacer el join -->
                 <div class="text-sm opacity-50">{{product.sizes.join(", ")}}</div>
               </div>
