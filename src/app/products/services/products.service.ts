@@ -64,6 +64,21 @@ export class ProductsService {
       tap(resp => this.productCache.set(idSlug, resp))
     );
 
+  }
+
+  getProductById(id: string): Observable<Product> {
+
+    if(this.productCache.has(id)){
+      return of(this.productCache.get(id)!);
+    }
+
+    return this.http
+    .get<Product>(`${baseUrl}/products/${id}`)
+    .pipe( //Este console log habria que quitarlo para pro, pero lo dejo como ejemplo
+      tap(resp => console.log(resp)),
+      delay(2000), //Forzamos 2 segundos de daily para ver la diferencia entre cacheado y no cacheado, en la vida real no hariamos esto
+      tap(resp => this.productCache.set(id, resp))
+    );
 
   }
 
