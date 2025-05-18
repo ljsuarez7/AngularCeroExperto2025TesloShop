@@ -1,5 +1,6 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ProductCarouselComponent } from '@products/components/product-carousel/product-carousel.component';
 import { Product } from '@products/interfaces/product.interface';
 import { ProductsService } from '@products/services/products.service';
@@ -15,9 +16,10 @@ export class ProductDetailsComponent implements OnInit {
 
   product = input.required<Product>();
 
-  productService = inject(ProductsService);
-
+  router = inject(Router);
   fb = inject(FormBuilder);
+
+  productService = inject(ProductsService);
 
   productForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -78,12 +80,27 @@ export class ProductDetailsComponent implements OnInit {
       tags: formValue.tags?.toLowerCase().split(',').map(tag => tag.trim()) ?? []
     };
 
-    this.productService.updateProduct(this.product().id, productLike).subscribe(
-      product => {
-        console.log('Producto actualizado: ', product);
+    if(this.product().id === 'new') {
 
-      }
-    );
+      //Crear producto
+      this.productService.createProduct(productLike).subscribe(
+        product => {
+          console.log('Producto creado: ', product);
+          this.router.navigate(['/admin/products', product.id]);
+        }
+      );
+
+    }else {
+
+      //Actualizar producto
+      this.productService.updateProduct(this.product().id, productLike).subscribe(
+        product => {
+          console.log('Producto actualizado: ', product);
+        }
+      );
+
+    }
+
 
   }
 
