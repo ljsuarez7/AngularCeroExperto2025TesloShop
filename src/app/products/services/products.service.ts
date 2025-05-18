@@ -82,4 +82,10 @@ export class ProductsService {
 
   }
 
+  updateProduct(id: string, productLike: Partial<Product>): Observable<Product> {
+
+    return this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike);
+
+  }
+
 }

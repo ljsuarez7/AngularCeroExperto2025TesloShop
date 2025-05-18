@@ -2,6 +2,7 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductCarouselComponent } from '@products/components/product-carousel/product-carousel.component';
 import { Product } from '@products/interfaces/product.interface';
+import { ProductsService } from '@products/services/products.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { FormUtils } from '@utils/form-utils';
 
@@ -13,6 +14,8 @@ import { FormUtils } from '@utils/form-utils';
 export class ProductDetailsComponent implements OnInit {
 
   product = input.required<Product>();
+
+  productService = inject(ProductsService);
 
   fb = inject(FormBuilder);
 
@@ -60,8 +63,28 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   onSubmit(){
+
+    //Marcamos todos los campos como tocados para resaltar errores si los hubiese.
+    this.productForm.markAllAsTouched();
+
+    //Comprobamos si el formulario es valido, si no lo es no hacemos nada más
     const isValid = this.productForm.valid;
-    console.log(this.productForm.value, {isValid});
+    if(!isValid) return;
+
+    const formValue = this.productForm.value;
+
+    const productLike: Partial<Product> = {
+      ...(formValue as any),
+      tags: formValue.tags?.toLowerCase().split(',').map(tag => tag.trim()) ?? []
+    };
+
+    this.productService.updateProduct(this.product().id, productLike).subscribe(
+      product => {
+        console.log('Producto actualizado: ', product);
+
+      }
+    );
+
   }
 
 }
